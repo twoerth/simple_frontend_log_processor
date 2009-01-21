@@ -25,6 +25,13 @@
 22: BACKEND_TOTAL
 23: FRONTEND_TOTAL
 """
+
+class FormatError(Exception):
+	def __init__(self, value):
+		self.value = value
+	def __str__(self):
+		return repr(self.value)
+
 class FrontendLog:
 	def __init__(self, stream, filename ):
 		self.stream = stream
@@ -49,93 +56,97 @@ class FrontendLog:
 			if len( ts ) == 1:
 				ts.append( '0' )
 
-			if len( data ) == 25:
-				res = (
-					ts[0],
-					self.filename,
-					self.linenum,
-					ts[1],
-					data[2],
-					data[3],
-					data[4],
-					data[5],
-					data[6],
-					data[7],
-					data[8],
-					data[9],
-					data[10],
-					data[12],
-					data[13],
-					data[14],
-					data[15],
-					data[16],
-					data[17],
-					data[18],
-					data[19],
-					data[20],
-					data[21],
-					data[22],
-					self.second_to_strint( data[23] ),
-					self.second_to_strint( data[24] )
-				)
-				yield res
-			elif len( data ) == 24:				
-				res = (
-					ts[0],
-					self.filename,
-					self.linenum,
-					ts[1],
-					data[2],
-					data[3],
-					data[4],
-					'legacy',
-					data[5],
-					data[6],
-					data[7],
-					data[8],
-					data[9],
-					data[11],
-					data[12],
-					data[13],
-					data[14],
-					data[15],
-					data[16],
-					data[17],
-					data[18],
-					data[19],
-					data[20],
-					data[21],
-					self.second_to_strint( data[22] ),
-					self.second_to_strint( data[23] )
-				)
-				yield res
-			elif len( data ) == 21:
-				res = (
-					ts[0],
-					self.filename,
-					self.linenum,
-					ts[1],
-					data[2],
-					data[3],
-					data[4],
-					'legacy',
-					data[5],
-					data[6],
-					data[7],
-					data[8],
-					data[9],
-					data[11],
-					data[12],
-					data[13],
-					data[14],
-					data[15],
-					data[16],
-					data[17],
-					data[18],
-					data[19],
-					data[20],
-					'', '', ''
-				)
-				yield res
-			else:
-				print 'INVALID: ' + str( data )
+			try:
+				if len( data ) == 25:
+					res = (
+						ts[0],
+						self.filename,
+						self.linenum,
+						ts[1],
+						data[2],
+						data[3],
+						data[4],
+						data[5],
+						data[6],
+						data[7],
+						data[8],
+						data[9],
+						data[10],
+						data[12],
+						data[13],
+						data[14],
+						data[15],
+						data[16],
+						data[17],
+						data[18],
+						data[19],
+						data[20],
+						data[21],
+						data[22],
+						self.second_to_strint( data[23] ),
+						self.second_to_strint( data[24] )
+					)
+					yield res
+				elif len( data ) == 24:				
+					res = (
+						ts[0],
+						self.filename,
+						self.linenum,
+						ts[1],
+						data[2],
+						data[3],
+						data[4],
+						'legacy',
+						data[5],
+						data[6],
+						data[7],
+						data[8],
+						data[9],
+						data[11],
+						data[12],
+						data[13],
+						data[14],
+						data[15],
+						data[16],
+						data[17],
+						data[18],
+						data[19],
+						data[20],
+						data[21],
+						self.second_to_strint( data[22] ),
+						self.second_to_strint( data[23] )
+					)
+					yield res
+				elif len( data ) == 21:
+					res = (
+						ts[0],
+						self.filename,
+						self.linenum,
+						ts[1],
+						data[2],
+						data[3],
+						data[4],
+						'legacy',
+						data[5],
+						data[6],
+						data[7],
+						data[8],
+						data[9],
+						data[11],
+						data[12],
+						data[13],
+						data[14],
+						data[15],
+						data[16],
+						data[17],
+						data[18],
+						data[19],
+						data[20],
+						'', '', ''
+					)
+					yield res
+				else:
+					raise FormatError()
+					
+			except Exception, e:
+				print 'Exception : ' + line
